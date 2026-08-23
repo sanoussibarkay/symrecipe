@@ -10,8 +10,8 @@ class HomController  extends AbstractController
 #[Route('/', name: 'home.index', methods: ['GET'])]
     public function index(): Response
     {
-        return $this->render('home.html.twig', [
-            'controller_name' => 'HomController',
+        return $this->render('pages/home.html.twig', [
+                'controller_name' => 'HomController',
         ]);
       
     }
