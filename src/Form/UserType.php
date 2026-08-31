@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+
+
+class UserType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('fullName',TextType::class, [
+                'label' => 'Nom / Prénom',
+                'attr' => [
+                    'placeholder' => 'Entrez votre nom complet',
+                    'class' => 'form-control',
+                    'minlength' => 2,
+                    'maxlength' => 50,
+                ],
+                'label_attr' => [
+                    'class' => 'form-label mt-4',
+                ],
+                'constraints' => [
+                    new Assert\Length(['min' => 2, 'max' => 50]),
+                    new Assert\NotBlank(),
+                ]
+            ])
+            ->add('pseudo', TextType::class, [
+                'label' => 'Pseudo',
+                'attr' => [
+                    'placeholder' => 'Entrez votre pseudo',
+                    'class' => 'form-control',
+                    'minlength' => 2,
+                    'maxlength' => 50,
+                ], 
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'form-label mt-4',
+                ],
+                'constraints' => [
+                    new Assert\Length(['min' => 2, 'max' => 50]),
+               
+                ]
+            ])   
+             ->add('plainPassword', passwordType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+                'label' => 'Mot de passe',
+                'label_attr' => [
+                    'class' => 'form-label mt-4',
+                ]
+             ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'S\'inscrire',
+                'attr' => [
+                    'class' => 'btn btn-primary mt-4',
+                ]
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => User::class,
+        ]);
+    }
+}

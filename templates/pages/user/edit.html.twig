@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+SYMRECIPE - modification de mon compte
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+         {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+               
+{% endfor %}
+            <h1>modification de mon compte</h1>
+    {# Formulaire de modification du compte utilisateur #}
+
+
+
+
+   {{ form(form) }}
+
+         
+        </div>
+  
+
+{% endblock %}

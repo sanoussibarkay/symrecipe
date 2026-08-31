@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\RegistrationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -29,5 +30,28 @@ final class SecurityController extends AbstractController
      public function logout(): void
     {
        
+    }
+    
+    #[Route('/inscription', name: 'security.registration', methods: ['GET', 'POST'])]
+    public function registration(\Symfony\Component\HttpFoundation\Request $request, \Doctrine\ORM\EntityManagerInterface $entityManager): Response
+    {
+        $user = new \App\Entity\User();
+        $user->setRoles(['ROLE_USER']);
+        
+        $form = $this->createForm(RegistrationType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');  
+            $entityManager->persist($user);
+            $entityManager->flush();
+            return $this->redirectToRoute('security.login');
+        }
+
+        return $this->render('pages/security/registration.html.twig', [
+            'controller_name' => 'SecurityController',
+            'form' => $form->createView(),
+        ]);
     }
 }
