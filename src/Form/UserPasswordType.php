@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class UserPasswordType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -23,7 +23,11 @@ class UserPasswordType extends AbstractType
                     'attr' => [
                         'placeholder' => 'Entrez votre mot de passe',
                         'class' => 'form-control',
-                    ]
+                    ],
+                     'constraints' => [
+            new NotBlank(),
+            
+        ],
                 ],
                 'second_options' => [
                     'label' => 'Confirmez le mot de passe',
@@ -35,20 +39,20 @@ class UserPasswordType extends AbstractType
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['min' => 6]),
+                    
                 ]
 
             ])
             ->add('newPassword', PasswordType::class, [
                 'label' => 'nouveau Mot de passe',
-                'label_attr' => [
-                    'class' => 'form-label mt-4',
-                ],
                 'attr' => [
                     'placeholder' => 'Entrez votre mot de passe',
                     'class' => 'form-control',    
                 ],
-                'constraints' => [new NotBlank()]
+                 'constraints' => [
+        new NotBlank(),
+        
+    ]
                  ] )
             ->add('submit', SubmitType::class, [
                 'label' => 'S\'inscrire',

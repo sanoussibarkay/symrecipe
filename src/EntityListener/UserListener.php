@@ -22,8 +22,13 @@ class UserListener
 
     public function preUpdate(\App\Entity\User $user)
     {
+        
         $this->encodePassword($user);
     }
+    public function preFlush(User $user): void
+{
+    $this->encodePassword($user);
+}
 
     /**encode password based on the plain password if it is not null
      * @param \App\Entity\User $user

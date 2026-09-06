@@ -5,7 +5,7 @@
 
 {% block body %}
 <div class="container mt-5">
-  {% if not ingredients is same as([]) %}
+  {% if ingredients is not same as([]) %}
     <h1>mes ingredient</h1>
     <a href="{{ path('ingredient.new') }}" class="btn btn-primary">Ajouter un ingredient</a>
 

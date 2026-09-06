@@ -32,6 +32,7 @@ final class SecurityController extends AbstractController
        
     }
     
+
     #[Route('/inscription', name: 'security.registration', methods: ['GET', 'POST'])]
     public function registration(\Symfony\Component\HttpFoundation\Request $request, \Doctrine\ORM\EntityManagerInterface $entityManager): Response
     {
@@ -41,12 +42,19 @@ final class SecurityController extends AbstractController
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
             $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');  
             $entityManager->persist($user);
             $entityManager->flush();
-            return $this->redirectToRoute('security.login');
+            return $this->redirectToRoute('security.login');   
+            }else {
+                
+                $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');  
+                return $this->redirectToRoute('security.registration');
+            }
+           
+
         }
 
         return $this->render('pages/security/registration.html.twig', [

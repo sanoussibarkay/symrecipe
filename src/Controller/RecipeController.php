@@ -2,16 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Recipe;
+use App\Form\RecipeType;
 use App\Repository\RecipeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Paginator;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Request;
-use App\Entity\Recipe;
-use App\Form\RecipeType;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class RecipeController extends AbstractController
 {
@@ -27,11 +29,12 @@ final class RecipeController extends AbstractController
     public function index(
         RecipeRepository $repository, 
         PaginatorInterface $paginator, 
-        Request $request
+        Request $request,
+
         ): Response
     {
         $recipes = $paginator->paginate(
-            $repository->findAll(),
+            $repository->findBy(['user' => $this->getUser()]), /* query NOT result */
             $request->query->getInt('page', 1),
             10
         );
@@ -48,20 +51,32 @@ final class RecipeController extends AbstractController
      * @Route("/recette/creation", name="recipe.new", methods={"GET", "POST"})
      */
     #[Route('/recette/creation', name: 'recipe.new', methods: ['GET', 'POST'])]
+     #[IsGranted(
+    attribute: new Expression('user === subject'),
+    subject: new Expression('args["recipe"].getUser()')
+)]
     public function new(Request $request, EntityManagerInterface $manager): Response
     {
         $recipe = new Recipe();
         $form = $this->createForm(RecipeType::class, $recipe);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $recipe = $form->getData();
-            $manager->persist($recipe);
-            $manager->flush();
-
-            $this->addFlash('success', 'La recette a été créée avec succès !');
-
-            return $this->redirectToRoute('recipe.index');
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                try {
+                    $recipe->setUser($this->getUser());
+                    $manager->persist($recipe);
+                    $manager->flush();
+                    $this->addFlash('success', 'La recette a été créée avec succès !');
+                    return $this->redirectToRoute('recipe.index');
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de la création de la recette : veuillez vous connectez');
+                    return $this->redirectToRoute('recipe.new');
+                }
+            }else {
+                $this->addFlash('error', 'Le formulaire contient des erreurs. Veuillez vérifier les champs et réessayer.');
+                return $this->redirectToRoute('recipe.new');
+            }
+        
         }
 
         return $this->render('pages/recipe/new.html.twig', [
@@ -79,6 +94,10 @@ final class RecipeController extends AbstractController
         */
 
     #[Route('/recette/edition/{id}', name: 'recipe.edit', methods: ['GET', 'POST'])]
+     #[IsGranted(
+    attribute: new Expression('user === subject'),
+    subject: new Expression('args["recipe"].getUser()')
+)]
     public function edit(
         \App\Entity\Recipe $recipe,
           Request $request, 
@@ -88,7 +107,6 @@ final class RecipeController extends AbstractController
         $form = $this->createForm(\App\Form\RecipeType::class, $recipe);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $recipe = $form->getData();
             $manager->persist($recipe);
             $manager->flush();  
             $this->addFlash('success', 'La recette a été modifiée avec succès !'); 
