@@ -1,21 +1,35 @@
 {% extends "base.html.twig" %}
 
-{% block title %}symrecipe - accueil{% endblock %}
+{% block title %}symrecipe - accueil
+{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="jumbotron">
-  <h1 class="display-4">Bienveju sur symrecipe!</h1>
-  <p class="lead">This is a simple hero unit,
-   a simple jumbotron-style component for calling extra attention 
-  to featured content or information.
-  This is a simple hero unit, a simple jumbotron-style component for calling extra attention 
-  to featured content or information.</p>
-  <hr class="my-4">
-  <p>pour commencer rendez vous sur la page pour inscrire</p>
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="{{ path('security.registration') }}" role="button">inscription</a>
-  </p>
+	<div class="container mt-4">
+		<div class="jumbotron">
+			<h1 class="display-4">Bienveju sur symrecipe!</h1>
+			<p class="lead">vous pouvez consulter les recettes de la communaute</p>
+			<hr class="my-4">
+			<p>pour commencer rendez vous sur la page pour inscrire</p>
+				<a class="btn btn-primary btn-lg" href="{{ path('security.registration') }}" role="button">inscription</a>
+		</div>
+
+		<div class="recipes">
+			<h2>Recette de la communaute</h2>
+			<div class="d-flex justify-content-between">
+				{% for recipe in recipes %}
+					<div class="card border-primary m-3 mr-3" style="width: 18rem;">
+						<div class="card-header">Recette n°:
+							{{recipe.id}}
+            </div>
+						<div class="card-body">
+							<h5 class="card-title">{{ recipe.name }}</h5>
+							<p class="card-text">{{ recipe.description|slice(0, 100) ~ '...' }}</p>
+						</div>
+				    </div>
+		     	{% endfor %}
+		   </div>
+     </div>
 </div>
-</div>
+
 {% endblock %}
+

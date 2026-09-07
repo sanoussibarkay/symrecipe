@@ -50,6 +50,7 @@ class AppFixtures extends Fixture
 
 
         //recipe
+        $recipes = [];
         for ($i = 0; $i < 25 ; $i++) {
             $recipe = new \App\Entity\Recipe();
             $recipe->setName($this->faker->word())
@@ -59,12 +60,27 @@ class AppFixtures extends Fixture
             ->setDescription($this->faker->text(300))
             ->setUser($users[\mt_rand(0, \count($users) - 1)])
             ->setPrice(\mt_rand(0, 1) == 1 ? \mt_rand(1, 1000) : null)
-            ->setIsFavorite(\mt_rand(0, 1 ) == 1 ? true : false);
+            ->setIsFavorite(\mt_rand(0, 1 ) == 1 ? true : false)
+            ->setisPublic(\mt_rand(0, 1 ) == 1 ? true : false);
             for ($j = 0; $j < \mt_rand(5, 15
 ); $j++) { 
                 $recipe->addIngredient($ingredients[\mt_rand(0, \count($ingredients) - 1)]);
             }
+            $recipes[] = $recipe;
             $manager->persist($recipe);
+        }
+
+        //mark
+        foreach ($recipes as $recipe) {
+            for ($i=0; $i < \mt_rand(0, 4); $i++) { 
+            $mark = new \App\Entity\Mark();
+            $mark->setMark(\mt_rand(1, 5))
+            ->setUser($users[\mt_rand(0, \count($users) - 1)])
+            ->setRecipe($recipes[\mt_rand(0, \count($recipes) - 1)]);
+            $manager->persist($mark);
+               
+            }
+           
         }
 
         

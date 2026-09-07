@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Recipe;
 use App\Form\RecipeType;
+use App\Repository\MarkRepository;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Paginator;
@@ -42,7 +43,68 @@ final class RecipeController extends AbstractController
             'recipes' => $recipes,
         ]);
     }
+    
 
+    #[Route('/recette/public', name: 'recipe.index.public', methods: ['GET'])]
+    public function indexPublic(
+        RecipeRepository $repository, 
+        PaginatorInterface $paginator, 
+        Request $request,
+
+        ): Response
+    {
+        $recipes = $paginator->paginate(
+            $repository->findPublicRecipe(null), /* query NOT result */
+            $request->query->getInt('page', 1),
+            10
+        );
+        return $this->render('pages/recipe/index_public.html.twig', [
+            'recipes' => $recipes,
+        ]);
+    }
+    /**
+     * This controller is used to display a recipe.
+     * @param Recipe $recipe
+     * @return Response
+     * @Route("/recette/{id}", name="recipe.show", methods={"GET"})
+     */
+    #[Route('/recette/{id}', name: 'recipe.show', methods: ['GET', 'POST'])]
+      #[IsGranted(
+    attribute: new Expression('subject === true'),
+    subject: new Expression('args["recipe"].isPublic()')
+)]
+    public function show(Recipe $recipe, 
+    Request $request, 
+    EntityManagerInterface $entityManager,
+    MarkRepository $markRepository
+
+    ): Response
+    {
+        $mark = new \App\Entity\Mark();
+        $form = $this->createForm(\App\Form\MarkType::class, $mark);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $mark->setUser($this->getUser());
+            $mark->setRecipe($recipe);
+            $existingMark = $markRepository->findOneBy([
+                'user' => $this->getUser(), 
+                'recipe' => $recipe]);
+            if ($existingMark) {
+                $this->addFlash('error', 'Vous avez déjà noté cette recette.');
+                return $this->redirectToRoute('recipe.show', ['id' => $recipe->getId()]);
+            }
+            $entityManager->persist($mark);
+        
+            $entityManager->flush();
+            $this->addFlash('success', 'Votre note a été enregistrée avec succès !');
+            return $this->redirectToRoute('recipe.show', ['id' => $recipe->getId()]);
+        }
+        return $this->render('pages/recipe/show.html.twig', [
+            'recipe' => $recipe,
+            'form' => $form->createView(),
+        ]);
+    }
     /**
      * This controller is used to create a new recipe.
      * @param Request $request
