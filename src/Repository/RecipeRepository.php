@@ -26,7 +26,7 @@ class RecipeRepository extends ServiceEntityRepository
         $queryBuilder =  $this->createQueryBuilder('r')
             ->andWhere('r.isPublic = 1')
             ->orderBy('r.createdAt', 'DESC');
-            if ($nbRecipes !== 0 || $nbRecipes !== null) {
+            if ($nbRecipes > 0 && $nbRecipes !== null) {
                 # code...
                 $queryBuilder->setMaxResults($nbRecipes);
             }

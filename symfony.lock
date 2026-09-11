@@ -47,6 +47,30 @@
             "./migrations/.gitignore"
         ]
     },
+    "easycorp/easyadmin-bundle": {
+        "version": "5.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.14",
+            "ref": "13b3e524d1038a6861ad6c7fc64e31b644ba0c54"
+        },
+        "files": [
+            "./config/routes/easyadmin.yaml"
+        ]
+    },
+    "karser/karser-recaptcha3-bundle": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "c51ce07c10331d506762efe25b6f5843c1a5ea17"
+        },
+        "files": [
+            "./config/packages/karser_recaptcha3.yaml"
+        ]
+    },
     "knplabs/knp-paginator-bundle": {
         "version": "v6.10.0"
     },
@@ -285,6 +309,15 @@
             "./templates/base.html.twig"
         ]
     },
+    "symfony/uid": {
+        "version": "7.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "7.0",
+            "ref": "0df5844274d871b37fc3816c57a768ffc60a43a5"
+        }
+    },
     "symfony/ux-turbo": {
         "version": "2.36",
         "recipe": {
@@ -295,6 +328,18 @@
         },
         "files": [
             "./config/packages/ux_turbo.yaml"
+        ]
+    },
+    "symfony/ux-twig-component": {
+        "version": "2.36",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.13",
+            "ref": "f367ae2a1faf01c503de2171f1ec22567febeead"
+        },
+        "files": [
+            "./config/packages/twig_component.yaml"
         ]
     },
     "symfony/validator": {
@@ -336,5 +381,17 @@
     },
     "twig/extra-bundle": {
         "version": "v3.24.0"
+    },
+    "vich/uploader-bundle": {
+        "version": "2.10",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.13",
+            "ref": "1b3064c2f6b255c2bc2f56461aaeb76b11e07e36"
+        },
+        "files": [
+            "./config/packages/vich_uploader.yaml"
+        ]
     }
 }

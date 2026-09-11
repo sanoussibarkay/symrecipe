@@ -45,7 +45,7 @@ final class RecipeController extends AbstractController
     }
     
 
-    #[Route('/recette/public', name: 'recipe.index.public', methods: ['GET'])]
+    #[Route('/recette/communaute', name: 'recipe.community', methods: ['GET'])]
     public function indexPublic(
         RecipeRepository $repository, 
         PaginatorInterface $paginator, 
@@ -58,7 +58,7 @@ final class RecipeController extends AbstractController
             $request->query->getInt('page', 1),
             10
         );
-        return $this->render('pages/recipe/index_public.html.twig', [
+        return $this->render('pages/recipe/community.html.twig', [
             'recipes' => $recipes,
         ]);
     }
@@ -68,11 +68,12 @@ final class RecipeController extends AbstractController
      * @return Response
      * @Route("/recette/{id}", name="recipe.show", methods={"GET"})
      */
-    #[Route('/recette/{id}', name: 'recipe.show', methods: ['GET', 'POST'])]
-      #[IsGranted(
-    attribute: new Expression('subject === true'),
-    subject: new Expression('args["recipe"].isPublic()')
+    #[Route('/recette/{id<\d+>}', name: 'recipe.show', methods: ['GET', 'POST'])]
+     #[IsGranted(
+    attribute : new Expression('subject.isPublic() or user === subject.getUser()'),
+    subject: new Expression('args["recipe"]')
 )]
+#[IsGranted('ROLE_USER')]
     public function show(Recipe $recipe, 
     Request $request, 
     EntityManagerInterface $entityManager,
@@ -113,10 +114,7 @@ final class RecipeController extends AbstractController
      * @Route("/recette/creation", name="recipe.new", methods={"GET", "POST"})
      */
     #[Route('/recette/creation', name: 'recipe.new', methods: ['GET', 'POST'])]
-     #[IsGranted(
-    attribute: new Expression('user === subject'),
-    subject: new Expression('args["recipe"].getUser()')
-)]
+     #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $manager): Response
     {
         $recipe = new Recipe();
@@ -131,7 +129,7 @@ final class RecipeController extends AbstractController
                     $this->addFlash('success', 'La recette a été créée avec succès !');
                     return $this->redirectToRoute('recipe.index');
                 } catch (\Exception $e) {
-                    $this->addFlash('error', 'Une erreur est survenue lors de la création de la recette : veuillez vous connectez');
+                    $this->addFlash('error', 'Une erreur est survenue lors de la création de la recette.' . $e->getMessage());
                     return $this->redirectToRoute('recipe.new');
                 }
             }else {
@@ -187,7 +185,12 @@ final class RecipeController extends AbstractController
      * @return Response
      * @Route("/recette/suppression/{id}", name="recipe.delete", methods={"GET"})
      */
+    
     #[Route('/recette/suppression/{id}', name: 'recipe.delete', methods: ['GET'])]
+    #[IsGranted(
+        attribute: new Expression("is_granted('ROLE_USER') and user === subject"),
+        subject: new Expression('args["recipe"].getUser()')
+    )]
     public function delete(
         \App\Entity\Recipe $recipe,
         \Doctrine\ORM\EntityManagerInterface $manager

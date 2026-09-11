@@ -5,7 +5,7 @@
 
 {% block body %}
 <div class="container mt-5">
-  {% if not recipes is same as([]) %}
+  {% if not recipes.items is same as([]) %}
     <h1>Mes  recettes</h1>
     <a href="{{ path('recipe.new') }}" class="btn btn-success mb-3">ajouter une recette</a>
   
@@ -35,7 +35,7 @@
        <tr class="table-primary">
       <th scope="row">{{ recipe.id }}</th>
       <td>{{ recipe.name }}</td>
-      <td>{{ recipe.price }} {{ recipe.price is same as (null) ? 'non renseigné' : '€' }}</td>
+      <td>{{ recipe.price|number_format(2, ',', ' ') }} {{ recipe.price is same as (null) ? 'non renseigné' : '€' }}</td>
       <td>{{ recipe.createdAt|date('d/m/Y') }}</td>
       <td>{{ recipe.difficulty  }} {{ recipe.difficulty is same as (null) ? 'non renseigné' : '' }}</td>
       <td><a href="{{ path('recipe.edit', {'id': recipe.id}) }}" class="btn btn-warning">modifier</a></td>
@@ -52,6 +52,7 @@
 
   {% else %}
     <h1>aucune recette</h1>
+    <a href="{{ path('recipe.new') }}" class="btn btn-success mb-3">ajouter une recette</a>
   {% endif %}
 
 </div>

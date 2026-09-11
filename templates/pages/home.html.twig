@@ -22,7 +22,9 @@
 							{{recipe.id}}
             </div>
 						<div class="card-body">
-							<h5 class="card-title">{{ recipe.name }}</h5>
+							<h5 class="card-title">
+								<a href="{{ path('recipe.show', {'id': recipe.id}) }}">{{ recipe.name }}</a>
+							</h5>
 							<p class="card-text">{{ recipe.description|slice(0, 100) ~ '...' }}</p>
 						</div>
 				    </div>

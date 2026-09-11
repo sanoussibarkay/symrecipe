@@ -18,6 +18,11 @@
     {% endfor %}
 
     <h1 class="display-4">{{recipe.name}}</h1> 
+
+   <div class='recipe_image mt-4'>
+    <img style="max-width: 100%" src="{{ vich_uploader_asset(recipe, 'imageFile') }}" alt="{{ recipe.name }}" class="img-fluid">
+    </div>
+
     <p>la recette a une note moyenne de : {{recipe.average|number_format(2, ',', ' ')}}/5</p>
 
     <span class="badge bg-primary">cree le {{recipe.createdAt|date('d/m/Y')}} by {{recipe.user.fullname}}</span>

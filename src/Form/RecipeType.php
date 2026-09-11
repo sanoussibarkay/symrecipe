@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 
 class RecipeType extends AbstractType
@@ -98,6 +99,7 @@ private $security;
                         new Assert\LessThan(51)
                     ],
                 ])
+            
             ->add('description', TextareaType::class,
                 [
                     'attr' => [
@@ -125,6 +127,7 @@ private $security;
                         new Assert\LessThan(1001)
                     ],
                 ])
+            
             ->add('isFavorite', CheckboxType::class, [
                 'label' => 'Favori',
                 'label_attr' => [
@@ -149,9 +152,22 @@ private $security;
                 'expanded' => true,
                
                 
-            ]   )
+            ])
+            ->add('imageFile', VichImageType::class , [
+                'label' => 'Image de la recette',
+                'label_attr' => [
+                    'class' => 'form-label mt-4',
+                ],
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => false,
+                'image_uri' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
             ->add('submit',SubmitType::class, [
-                'label' => 'Créer une recette',
+                'label' => $builder->getData()->getId() ? 'Modifier la recette' : 'Créer une recette',
                 'attr' => [
                     'class' => 'btn btn-primary mt-3',
                 ],

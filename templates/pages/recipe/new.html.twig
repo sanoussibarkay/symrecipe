@@ -75,20 +75,21 @@
     <div class="form-errors"> 
     {{ form_errors(form.ingredients) }} 
     </div>
+
+    <div class="form-group">
+    {{ form_label(form.imageFile) }}
+    {{ form_widget(form.imageFile) }}
+    <div class="form-errors">
+        {{ form_errors(form.imageFile) }}
+    </div>
+     
+
   </div>  
 
  
 
- 
-  
-
   </div>
 
-
-
-
-
-    
     
     {{ form_row(form.submit) }}
     {{ form_end(form) }}

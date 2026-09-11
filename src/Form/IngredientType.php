@@ -54,7 +54,7 @@ class IngredientType extends AbstractType
                     'attr' => [
                         'class' => 'btn btn-primary mt-4',
                     ],
-                    'label' => 'Créer l\'ingrédient',
+                    'label' => $builder->getData()->getId() ? 'Modifier l\'ingrédient' : 'Créer un ingrédient',
                 ])
            
 

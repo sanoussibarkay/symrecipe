@@ -83,6 +83,16 @@ class AppFixtures extends Fixture
            
         }
 
+        //contact
+        for ($i=0; $i < 5; $i++) {
+            $contact = new \App\Entity\Contact();
+            $contact->setFullName($this->faker->name())
+            ->setEmail($this->faker->email())
+            ->setSubject('demande n°'.($i+1))
+            ->setMessage($this->faker->text(300));
+            $manager->persist($contact);
+        }
+
         
         $manager->flush();
 

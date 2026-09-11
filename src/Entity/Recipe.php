@@ -2,18 +2,22 @@
 
 namespace App\Entity;
 
+use App\Entity\Ingredient;
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 #[UniqueEntity('name')]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
+#[Vich\Uploadable]
 class Recipe
 {
     #[ORM\Id]
@@ -25,6 +29,12 @@ class Recipe
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50)]
     private ?string $name = null;
+
+    #[Vich\UploadableField(mapping: 'recipe_images', fileNameProperty: 'imageName',)]
+    private ?File $imageFile = null;
+    
+    #[ORM\Column(type:'string', nullable: true)]
+    private ?string $imageName = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\NotBlank]
@@ -72,7 +82,7 @@ class Recipe
     private ?User $user = null;
 
     #[ORM\Column]
-    private ?bool $isPublic = null;
+    private ?bool $isPublic = false;
 
     /**
      * @var Collection<int, Mark>
@@ -308,4 +318,41 @@ class Recipe
         return $this->average;
     }
     
+
+    /**
+     * Get the value of imageFile
+     */
+ public function getImageFile(): ?File
+{
+    return $this->imageFile;
+}
+
+    /**
+     * Set the value of imageFile
+     */
+ public function setImageFile(?File $imageFile = null): void
+{
+    $this->imageFile = $imageFile;
+
+    if (null !== $imageFile) {
+        $this->updated = new \DateTimeImmutable();
+    }
+}
+
+    /**
+     * Get the value of imageName
+     */
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    /**
+     * Set the value of imageName
+     */
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+
+    }
 }

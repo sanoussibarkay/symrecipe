@@ -5,17 +5,15 @@
 
 {% block body %}
 <div class="container mt-5">
-  {% if ingredients is not same as([]) %}
-    <h1>mes ingredient</h1>
-    <a href="{{ path('ingredient.new') }}" class="btn btn-primary">Ajouter un ingredient</a>
-
-    <div class="container">
-      {% for message in app.flashes('success') %}
+    {% for message in app.flashes('success') %}
       <div class="alert alert-success">
         {{ message }}
          </div>
       {% endfor %}
-
+  {% if  ingredients.items is  not same as([]) %}
+    <h1>mes ingredient</h1>
+    <a href="{{ path('ingredient.new') }}" class="btn btn-primary">Ajouter un ingredient</a>
+    <div class="container">
     <div class="d-flex justify-content-end">
        {{ ingredients.getTotalItemCount }} ingredients
     </div>
@@ -31,11 +29,12 @@
     </tr>
   </thead>
   <tbody>
+    
        {% for ingredient in ingredients %}
        <tr class="table-primary">
       <th scope="row">{{ ingredient.id }}</th>
       <td>{{ ingredient.name }}</td>
-      <td>{{ ingredient.price }}€</td>
+      <td>{{ ingredient.price|number_format(2, ',', ' ') }}€</td>
       <td>{{ ingredient.createdAt|date('d/m/Y') }}</td>
       <td><a href="{{ path('ingredient.edit', {'id': ingredient.id}) }}" class="btn btn-warning">modifier</a></td>
       <td><a href="{{ path('ingredient.delete', {'id': ingredient.id}) }}" class="btn btn-danger">supprimer</a></td>
@@ -51,6 +50,7 @@
 
   {% else %}
     <h1>aucun ingredient</h1>
+    <a href="{{ path('ingredient.new') }}" class="btn btn-primary">Ajouter un ingredient</a>
   {% endif %}
 
 </div>

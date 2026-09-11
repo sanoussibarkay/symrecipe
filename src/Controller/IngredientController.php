@@ -107,7 +107,11 @@ final class IngredientController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
+    
+    #[IsGranted(
+        attribute: new Expression("is_granted('ROLE_USER') and user === subject"),
+        subject: new Expression('args["ingredient"].getUser()')
+    )]
     #[Route('/ingredient/suppression/{id}', name: 'ingredient.delete', methods: ['GET'])]
     public function delete(
         \App\Entity\Ingredient $ingredient,
